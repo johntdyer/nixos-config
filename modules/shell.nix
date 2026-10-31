@@ -21,9 +21,9 @@
     };
 
     shellAliases = {
-      rebuild = "nh os switch";
-      rebuild-test = "nh os test";
-      update = "cd ~/nixos-config && nix flake update && nh os switch";
+      rebuild = "nh os switch ~/nixos-config";
+      rebuild-test = "nh os test ~/nixos-config";
+      update = "cd ~/nixos-config && nix flake update && nh os switch ~/nixos-config";
     };
   };
 
