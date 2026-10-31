@@ -3,7 +3,8 @@
   environment.systemPackages = with pkgs; [
     google-chrome
     ghostty
- tigervnc # remote desktop
-  remmina # remote desktop
+    tigervnc # remote desktop
+    remmina # remote desktop
+    freerdp
   ];
 }
