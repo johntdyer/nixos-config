@@ -1,6 +1,9 @@
 # AI coding tools.
-{ pkgs, pkgs-unstable, inputs, ... }:
+{ config, pkgs, pkgs-unstable, inputs, ... }:
 {
+ # Claude Desktop runs local file work in a QEMU/KVM VM
+  users.users.jdyer.extraGroups = [ "kvm" ];
+  boot.kernelModules = [ "vhost_vsock" ];
 
   programs.claude-desktop.enable = true; 
   environment.systemPackages = [
