@@ -12,6 +12,7 @@
     pantheon.elementary-files
     gnomeExtensions.dash-to-dock
     gnome-extension-manager
+    ulauncher
   ];
   # (Optional) Exclude default GNOME applications you don't want
   environment.gnome.excludePackages = with pkgs; [
