@@ -9,6 +9,7 @@
     ../../modules/gnome.nix        # copied from /etc/nixos/gnome.nix
     ../../modules/users.nix
     ../../modules/1password.nix
+    ../../modules/apps.nix
     ../../modules/shell.nix
   ];
 
