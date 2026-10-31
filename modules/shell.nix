@@ -23,9 +23,18 @@
     shellAliases = {
       rebuild = "nh os switch ~/nixos-config";
       rebuild-test = "nh os test ~/nixos-config";
-      update = "cd ~/nixos-config && nix flake update && nh os switch ~/nixos-config";
+      # Updates flake.lock and rebuilds, without leaving you in ~/nixos-config.
+      # Commit flake.lock afterwards.
+      update = "nh os switch --update ~/nixos-config";
     };
   };
 
   environment.systemPackages = [ pkgs.fzf ];
+
+  # Per-project dev shells: put `use flake` in a project's .envrc, then
+  # `direnv allow`. nix-direnv caches the shell so it loads instantly.
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
 }

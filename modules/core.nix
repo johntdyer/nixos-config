@@ -5,6 +5,8 @@
     experimental-features = [ "nix-command" "flakes" ];
     auto-optimise-store = true;
     trusted-users = [ "root" "@wheel" ];
+    # You rebuild before committing, so the "Git tree is dirty" warning is noise.
+    warn-dirty = false;
   };
 
   # Weekly cleanup of old generations so /nix doesn't fill the disk.

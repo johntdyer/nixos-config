@@ -1,4 +1,6 @@
-{ lib, pkgs, ... }: {
+# GNOME desktop: GDM, Finder-like file browsing, dock, Ulauncher, dconf defaults.
+{ lib, pkgs, ... }:
+{
   # GNOME on Wayland (xserver.enable still provides XWayland and keyboard layout).
   services.xserver.enable = true;
   services.displayManager.gdm.enable = true;
@@ -7,15 +9,16 @@
   # Quick Look: select a file in Files and press Space.
   services.gnome.sushi.enable = true;
 
-# Ulauncher’s own “Launch at login” option can write a /nix/store/... path into ~/.config/autostart, which breaks after updates and garbage collection. A systemd user service in your config avoids that. Add this inside modules/gnome.nix, next to the other settings:
-
- systemd.user.services.ulauncher = {
+  # Start Ulauncher with the session. Keep Ulauncher's own "Launch at login"
+  # OFF: it writes a /nix/store path into ~/.config/autostart that breaks
+  # after updates and garbage collection.
+  systemd.user.services.ulauncher = {
     description = "Ulauncher application launcher";
     wantedBy = [ "graphical-session.target" ];
     partOf = [ "graphical-session.target" ];
     after = [ "graphical-session.target" ];
     serviceConfig = {
-      ExecStart = "${pkgs.ulauncher}/bin/ulauncher --hide-window";
+      ExecStart = "${lib.getExe pkgs.ulauncher} --hide-window";
       Restart = "on-failure";
       # So apps and extensions launched from Ulauncher can find commands.
       Environment = "PATH=/run/wrappers/bin:/etc/profiles/per-user/%u/bin:/run/current-system/sw/bin";

@@ -1,11 +1,12 @@
-# AI coding tools.
-{ config, pkgs, pkgs-unstable, inputs, ... }:
+# AI tools: Claude Desktop, Claude Code, Hermes Agent.
+{ pkgs, pkgs-unstable, inputs, ... }:
 {
- # Claude Desktop runs local file work in a QEMU/KVM VM
+  # Claude Desktop runs local file work in a QEMU/KVM VM.
   users.users.jdyer.extraGroups = [ "kvm" ];
   boot.kernelModules = [ "vhost_vsock" ];
 
-  programs.claude-desktop.enable = true; 
+  programs.claude-desktop.enable = true;
+
   environment.systemPackages = [
     # From unstable, since Claude Code updates often.
     pkgs-unstable.claude-code
