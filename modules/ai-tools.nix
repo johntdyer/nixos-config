@@ -1,6 +1,8 @@
 # AI coding tools.
 { pkgs, pkgs-unstable, inputs, ... }:
 {
+
+  programs.claude-desktop.enable = true; 
   environment.systemPackages = [
     # From unstable, since Claude Code updates often.
     pkgs-unstable.claude-code
