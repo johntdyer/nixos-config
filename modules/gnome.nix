@@ -5,7 +5,14 @@
   # Enable the GNOME Desktop Environment.
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
+  # GNOME has this via Sushi. Select a file in Files and press Space.
+  services.gnome.sushi.enable = true;
 
+  environment.systemPackages = with pkgs; [
+    pantheon.elementary-files
+    gnomeExtensions.dash-to-dock
+    gnome-extension-manager
+  ];
   # (Optional) Exclude default GNOME applications you don't want
   environment.gnome.excludePackages = with pkgs; [
     gnome-tour

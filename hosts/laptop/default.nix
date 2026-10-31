@@ -10,6 +10,7 @@
     ../../modules/users.nix
     ../../modules/1password.nix
     ../../modules/apps.nix
+    ../../modules/ai-tools.nix
     ../../modules/shell.nix
   ];
 
