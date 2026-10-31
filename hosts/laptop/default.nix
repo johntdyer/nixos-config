@@ -16,6 +16,8 @@
     ../../modules/git.nix
     ../../modules/shell.nix
     ../../modules/tailscale.nix
+    ../../modules/network-tools.nix
+    ../../modules/esphome.nix
   ];
 
   networking.hostName = "nixos";

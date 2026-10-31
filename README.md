@@ -15,6 +15,8 @@ Flake-based NixOS config for the laptop (hostname `nixos`). Lives in `~/nixos-co
 - `modules/shell.nix`: zsh, oh-my-zsh, aliases, direnv
 - `modules/apps.nix`: desktop apps
 - `modules/tailscale.nix`: Tailscale VPN and MagicDNS
+- `modules/network-tools.nix`: dig, whois, mosh, Wireshark and tshark
+- `modules/esphome.nix`: ESPHome CLI and USB serial access
 - `modules/ai-tools.nix`: Claude Desktop, Claude Code, Hermes Agent
 
 ## Daily commands
