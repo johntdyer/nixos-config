@@ -26,6 +26,11 @@
       # Updates flake.lock and rebuilds, without leaving you in ~/nixos-config.
       # Commit flake.lock afterwards.
       update = "nh os switch --update ~/nixos-config";
+      # Switch back to the previous generation (system only; your repo files
+      # are untouched, so `git restore` or fix the config before the next rebuild).
+      rollback = "nh os rollback";
+      # List generations, with the running and boot-default ones marked.
+      generations = "nh os info";
     };
   };
 

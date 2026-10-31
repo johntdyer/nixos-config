@@ -6,9 +6,24 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     # Community hardware profiles (this laptop: ThinkPad T490s).
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    # Left on its own pinned nixpkgs: its Python/uv2nix build is only tested
-    # against that, and following ours risks breaking it on updates.
-    hermes-agent.url = "github:NousResearch/hermes-agent";
+    hermes-agent = {
+      url = "github:NousResearch/hermes-agent";
+      # Speed: make Hermes use our nixpkgs-unstable instead of its own pinned
+      # copy. Every nixpkgs copy in flake.lock is evaluated on every rebuild,
+      # so sharing one saves several seconds each time.
+      #
+      # Why unstable and not "nixpkgs" (26.05): Hermes's own flake.nix pins
+      # github:NixOS/nixpkgs/nixos-unstable, so that is what it is tested on.
+      #
+      # Trade-off: its Python packages (uv2nix) are built locally, not from
+      # cache.nixos.org, so Hermes rebuilds whenever nixpkgs-unstable moves
+      # (i.e. after `update`).
+      #
+      # If Hermes fails to build after an update: delete the follows line
+      # below, run `nix flake update hermes-agent`, then `rebuild`. That puts
+      # it back on the nixpkgs it was tested with.
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     claude-desktop = {
       url = "github:poeck/claude-desktop-nix-flake";
       # Reuse our nixpkgs instead of downloading and evaluating another copy.

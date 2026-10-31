@@ -12,6 +12,8 @@
     pkgs-unstable.claude-code
 
     # Nous Research Hermes Agent, straight from its own flake.
+    # It builds against our nixpkgs-unstable (see the hermes-agent input in
+    # flake.nix for why, and how to undo it if a build breaks).
     inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

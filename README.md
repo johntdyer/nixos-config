@@ -24,7 +24,8 @@ Flake-based NixOS config for the laptop (hostname `nixos`). Lives in `~/nixos-co
 | Try without making it the boot default | `rebuild-test` |
 | Update all inputs and rebuild | `update`, then commit `flake.lock` |
 | Update one input | `nix flake update <input>`, then `rebuild` |
-| Roll back | `sudo nixos-rebuild switch --rollback`, or pick an older generation at boot |
+| Roll back | `rollback` (`nh os rollback`), or pick an older generation at boot |
+| List generations | `generations` (`nh os info`) |
 | Clean old generations | `nh clean all --keep 5` |
 | Search packages | `nix search nixpkgs <name>` |
 | Format all files | `nix fmt` |

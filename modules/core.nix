@@ -3,7 +3,6 @@
 {
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
-    auto-optimise-store = true;
     trusted-users = [ "root" "@wheel" ];
     # You rebuild before committing, so the "Git tree is dirty" warning is noise.
     warn-dirty = false;
@@ -15,6 +14,17 @@
     dates = "weekly";
     options = "--delete-older-than 14d";
   };
+
+  # Deduplicate the store on a schedule instead of during every build
+  # (auto-optimise-store slows each rebuild).
+  nix.optimise = {
+    automatic = true;
+    dates = [ "weekly" ];
+  };
+
+  # Skip building the offline NixOS manual on every rebuild (it re-renders
+  # docs for every option). Use search.nixos.org instead. Man pages stay.
+  documentation.nixos.enable = false;
 
   nixpkgs.config.allowUnfree = true;
 
