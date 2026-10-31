@@ -11,6 +11,7 @@
     ../../modules/1password.nix
     ../../modules/apps.nix
     ../../modules/ai-tools.nix
+    ../../modules/git.nix
     ../../modules/shell.nix
   ];
 
