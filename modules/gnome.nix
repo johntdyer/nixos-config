@@ -7,6 +7,21 @@
   # Quick Look: select a file in Files and press Space.
   services.gnome.sushi.enable = true;
 
+# Ulauncher’s own “Launch at login” option can write a /nix/store/... path into ~/.config/autostart, which breaks after updates and garbage collection. A systemd user service in your config avoids that. Add this inside modules/gnome.nix, next to the other settings:
+
+ systemd.user.services.ulauncher = {
+    description = "Ulauncher application launcher";
+    wantedBy = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.ulauncher}/bin/ulauncher --hide-window";
+      Restart = "on-failure";
+      # So apps and extensions launched from Ulauncher can find commands.
+      Environment = "PATH=/run/wrappers/bin:/etc/profiles/per-user/%u/bin:/run/current-system/sw/bin";
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     pantheon.elementary-files     # Finder-style column view
     gnomeExtensions.dash-to-dock
