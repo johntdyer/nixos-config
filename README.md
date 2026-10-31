@@ -83,7 +83,7 @@ modules/
   apps.nix                   desktop apps, Wayland flag for Electron/Chromium
   tailscale.nix              Tailscale, Trayscale GUI, systemd-resolved for MagicDNS
   network-tools.nix          dig, whois, mosh, Wireshark + tshark
-  esphome.nix                ESPHome CLI, USB serial access
+  esphome.nix                ESPHome CLI, CuteCom, GTKTerm, USB serial access
   ai-tools.nix               Claude Desktop, Claude Code, Hermes Agent
 ```
 
@@ -101,7 +101,7 @@ Each module starts with a one-line comment saying what it covers. Group membersh
 | Security | 1Password (app, CLI, SSH agent, git signing) |
 | AI | Claude Desktop, Claude Code (from unstable), Hermes Agent |
 | Hardware | nixos-hardware T490s profile, fingerprint reader, firmware updates, power profiles |
-| Home automation | ESPHome |
+| Home automation / serial | ESPHome, CuteCom, GTKTerm |
 
 ## Flake inputs
 
