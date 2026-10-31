@@ -29,6 +29,12 @@
       # Reuse our nixpkgs instead of downloading and evaluating another copy.
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Git pre-commit hooks for this repo (secret scanning). Not part of the
+    # system: only used by the dev shell below.
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, ... }@inputs:
@@ -50,5 +56,33 @@
       };
 
       formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-rfc-style;
+
+      # Pre-commit hooks. Installed into .git/hooks automatically when direnv
+      # loads the dev shell (cd into the repo). Run against every file with
+      # `pre-commit run --all-files`; skip once with `git commit --no-verify`.
+      checks.${system}.pre-commit = inputs.git-hooks.lib.${system}.run {
+        src = ./.;
+        hooks = {
+          # Scans staged changes for API keys, tokens, passwords, etc.
+          gitleaks.enable = true;
+          # Blocks private keys (-----BEGIN ... PRIVATE KEY-----).
+          detect-private-keys.enable = true;
+          # Blocks accidentally committed big files (> 500 KB).
+          check-added-large-files.enable = true;
+          # Blocks leftover <<<<<<< / >>>>>>> merge markers.
+          check-merge-conflicts.enable = true;
+        };
+      };
+
+      # `nix develop` (or direnv) shell for working on this repo.
+      devShells.${system}.default =
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          inherit (self.checks.${system}.pre-commit) shellHook enabledPackages;
+        in
+        pkgs.mkShell {
+          inherit shellHook;
+          packages = enabledPackages;
+        };
     };
 }

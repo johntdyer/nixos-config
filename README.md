@@ -1,42 +1,220 @@
 # nixos-config
 
-Flake-based NixOS config for the laptop (hostname `nixos`). Lives in `~/nixos-config` as a git repo. No home-manager: per-user settings are done with NixOS options.
+Flake-based NixOS config for John's laptop: a Lenovo ThinkPad T490s (hostname `nixos`, user `jdyer`) running NixOS 26.05 with GNOME on Wayland.
 
-## Layout
-- `flake.nix`: inputs (nixpkgs 26.05, nixpkgs-unstable, hermes-agent, claude-desktop) and the `nixos` system
-- `hosts/laptop/`: hostname, `stateVersion`, the imports list, and the generated hardware config
-- `modules/core.nix`: nix settings, gc, boot loader, networking, locale, base CLI tools, nh
-- `modules/laptop.nix`: fingerprint, power, firmware updates, bluetooth, lid, zram
-- `modules/desktop.nix`: keyboard, PipeWire, printing, Firefox, fonts
-- `modules/gnome.nix`: GNOME, Files, Dash to Dock, Ulauncher, dconf defaults
-- `modules/users.nix`: the `jdyer` account
-- `modules/1password.nix`: 1Password app, CLI, browser integration, SSH agent
-- `modules/git.nix`: git config and SSH commit signing via 1Password
-- `modules/shell.nix`: zsh, oh-my-zsh, aliases, direnv
-- `modules/apps.nix`: desktop apps
-- `modules/tailscale.nix`: Tailscale VPN and MagicDNS
-- `modules/network-tools.nix`: dig, whois, mosh, Wireshark and tshark
-- `modules/esphome.nix`: ESPHome CLI and USB serial access
-- `modules/ai-tools.nix`: Claude Desktop, Claude Code, Hermes Agent
+- Lives in `~/nixos-config` as a git repo. `/etc/nixos` is not used.
+- Flakes, no home-manager. Per-user settings (zsh, git, GNOME, autostart) are set system-wide with NixOS options.
+- Rebuilds go through [nh](https://github.com/nix-community/nh), wrapped in shell aliases.
 
-## Daily commands
+## Contents
+- [Daily workflow](#daily-workflow)
+- [Aliases and commands](#aliases-and-commands)
+- [Layout](#layout)
+- [What's installed](#whats-installed)
+- [Flake inputs](#flake-inputs)
+- [Pre-commit hooks](#pre-commit-hooks)
+- [Bootstrapping a new laptop](#bootstrapping-a-new-laptop)
+- [Troubleshooting](#troubleshooting)
+- [Rules of thumb](#rules-of-thumb)
+
+## Daily workflow
+
+**Normal change**
+1. Edit a file in `~/nixos-config`.
+2. `git add -A` (flakes only see files git knows about).
+3. `rebuild`
+4. Log out and back in if you changed the shell, session variables, groups, GNOME extensions, dconf defaults or GUI apps.
+5. `git commit -am "what changed"` (1Password must be unlocked to sign).
+
+**Risky change** (boot, display, networking, login, kernel)
+1. `git add -A`
+2. `rebuild-test`: applies now but doesn't add a boot entry, so a reboot returns to the last good generation.
+3. Works: `rebuild`, then commit. Broken: reboot, then fix it or `git restore .`
+
+**Updating everything**
+1. `update` (updates `flake.lock` and rebuilds).
+2. `git commit -m "flake update" flake.lock`
+3. If one input breaks: `git restore flake.lock`, then update inputs one at a time with `nix flake update <input>` and `rebuild`.
+
+**Rolling back**
+1. `rollback`
+2. Fix the repo too, or the next `rebuild` reapplies the bad change: `git restore .` for uncommitted changes, `git revert HEAD` for a committed one.
+3. Can't log in at all: pick an older generation in the boot menu.
+
+## Aliases and commands
+
+| Alias | Runs | Use it to |
+|---|---|---|
+| `rebuild` | `nh os switch ~/nixos-config` | Apply changes and make them the boot default |
+| `rebuild-test` | `nh os test ~/nixos-config` | Apply changes until the next reboot |
+| `update` | `nh os switch --update ~/nixos-config` | Update all inputs and rebuild |
+| `rollback` | `nh os rollback` | Switch to the previous generation |
+| `generations` | `nh os info` | List generations (running and boot default marked) |
+
 | Task | Command |
 |---|---|
-| Apply changes | `rebuild` |
-| Try without making it the boot default | `rebuild-test` |
-| Update all inputs and rebuild | `update`, then commit `flake.lock` |
 | Update one input | `nix flake update <input>`, then `rebuild` |
-| Roll back | `rollback` (`nh os rollback`), or pick an older generation at boot |
-| List generations | `generations` (`nh os info`) |
-| Clean old generations | `nh clean all --keep 5` |
-| Search packages | `nix search nixpkgs <name>` |
+| See what a rebuild would build | `nh os build ~/nixos-config` |
+| Clean old generations now | `nh clean all --keep 5` (also runs weekly) |
+| Search packages and options | [search.nixos.org](https://search.nixos.org), or `nix search nixpkgs <name>` |
 | Format all files | `nix fmt` |
+| Scan the repo for secrets | `pre-commit run --all-files` |
 
-Never run plain `sudo nixos-rebuild switch --flake .`: it leaves root-owned files in the repo. If you need nixos-rebuild, use `nixos-rebuild switch --flake . --sudo`.
+Never run plain `sudo nixos-rebuild switch --flake .`: it leaves root-owned files in the repo (fix: `sudo chown -R jdyer:users ~/nixos-config`). If you need nixos-rebuild, use `nixos-rebuild switch --flake . --sudo`.
+
+## Layout
+
+```
+flake.nix                    inputs, the `nixos` system, formatter, pre-commit checks, dev shell
+flake.lock                   pinned input versions (committed)
+.envrc                       direnv: loads the dev shell, which installs the git hooks
+hosts/laptop/
+  default.nix                hostname, stateVersion, nixos-hardware profile, imports list
+  hardware-configuration.nix generated by nixos-generate-config; don't hand-edit
+modules/
+  core.nix                   nix settings, gc, store optimise, systemd-boot, NetworkManager, locale, base CLI tools, nh
+  laptop.nix                 fingerprint (Goodix), power profiles, thermald, fwupd, bluetooth, lid, zram
+  desktop.nix                keyboard, PipeWire, printing, Firefox, fonts
+  gnome.nix                  GNOME, Files, Sushi, Dash to Dock, Ulauncher, dconf defaults
+  users.nix                  the jdyer account
+  1password.nix              1Password app + CLI, Chrome integration, SSH agent
+  git.nix                    git config, commit/tag signing with the 1Password SSH key
+  shell.nix                  zsh, oh-my-zsh plugins, Starship prompt, aliases, direnv
+  apps.nix                   desktop apps, Wayland flag for Electron/Chromium
+  tailscale.nix              Tailscale, Trayscale GUI, systemd-resolved for MagicDNS
+  network-tools.nix          dig, whois, mosh, Wireshark + tshark
+  esphome.nix                ESPHome CLI, USB serial access
+  ai-tools.nix               Claude Desktop, Claude Code, Hermes Agent
+```
+
+Each module starts with a one-line comment saying what it covers. Group memberships live in the module that needs them (`kvm` in ai-tools, `wireshark` in network-tools, `dialout` in esphome).
+
+## What's installed
+
+| Area | What |
+|---|---|
+| Desktop | GNOME (Wayland), elementary Files, Sushi (Space to preview), Dash to Dock, Ulauncher on Super+Space |
+| Shell | zsh, oh-my-zsh plugins (git, sudo, z, history, colored-man-pages, fzf), autosuggestions, syntax highlighting, Starship prompt (Nerd Font symbols), direnv + nix-direnv |
+| CLI | git, vim, curl, wget, htop, ripgrep, fd, jq, fzf, nvd, nix-output-monitor |
+| Network | Tailscale + Trayscale, dig, whois, mosh, Wireshark, tshark |
+| Apps | Google Chrome, Firefox, Ghostty, Slack, Telegram, VS Code, Remmina, TigerVNC, FreeRDP |
+| Security | 1Password (app, CLI, SSH agent, git signing) |
+| AI | Claude Desktop, Claude Code (from unstable), Hermes Agent |
+| Hardware | nixos-hardware T490s profile, fingerprint reader, firmware updates, power profiles |
+| Home automation | ESPHome |
+
+## Flake inputs
+
+| Input | Source | Notes |
+|---|---|---|
+| `nixpkgs` | `nixos-26.05` | The system |
+| `nixpkgs-unstable` | `nixos-unstable` | Single newer packages: `pkgs-unstable.<name>` (Claude Code) |
+| `nixos-hardware` | NixOS/nixos-hardware | `lenovo-thinkpad-t490s` profile |
+| `hermes-agent` | NousResearch/hermes-agent | Follows `nixpkgs-unstable`; see the comment in `flake.nix` if it breaks |
+| `claude-desktop` | poeck/claude-desktop-nix-flake | Follows `nixpkgs` |
+| `git-hooks` | cachix/git-hooks.nix | Follows `nixpkgs`; repo pre-commit hooks only, not part of the system |
+
+New inputs that take `nixpkgs` should get `inputs.nixpkgs.follows`. Each extra nixpkgs copy slows every rebuild.
+
+## Pre-commit hooks
+
+Every commit is checked by:
+- **gitleaks**: API keys, tokens, passwords and other secrets in staged changes
+- **detect-private-keys**: `-----BEGIN ... PRIVATE KEY-----` blocks
+- **check-added-large-files**: files over 500 KB
+- **check-merge-conflicts**: leftover `<<<<<<<` / `>>>>>>>` markers
+
+The hooks are defined in `flake.nix` with git-hooks.nix and installed into `.git/hooks` when direnv loads the dev shell.
+
+- First time: `cd ~/nixos-config && direnv allow`
+- Scan everything: `pre-commit run --all-files`
+- Without direnv: `nix develop` installs them too
+- Skip once, only if you're sure it's a false positive: `git commit --no-verify`
+
+Public keys and your email are fine to commit. Never commit private keys, Tailscale auth keys, API tokens or password hashes. Keep those in 1Password.
+
+## Bootstrapping a new laptop
+
+### 0. Before you start (on this laptop, once)
+The repo has to be somewhere the new machine can clone it from. Push it to a **private** GitHub repo:
+```
+cd ~/nixos-config
+gh repo create nixos-config --private --source . --push
+```
+Keep it pushed after each commit (`git push`).
+
+### 1. Install NixOS
+1. Boot the NixOS 26.05 graphical installer, pick GNOME, user `jdyer`, hostname `nixos`.
+2. Reboot into the new system and connect to Wi-Fi.
+
+### 2. Get the repo
+The fresh system has no git, gh or 1Password yet, so clone over HTTPS with a temporary shell:
+```
+nix-shell -p git gh
+gh auth login            # GitHub.com > HTTPS > log in with a browser
+gh repo clone <github-user>/nixos-config ~/nixos-config
+cd ~/nixos-config
+```
+
+### 3. Bring in this machine's hardware config
+The installer generated one for the new disks. Use it instead of the old one:
+```
+cp /etc/nixos/hardware-configuration.nix hosts/laptop/hardware-configuration.nix
+git add -A
+```
+**Same model (T490s):** that's it. Go to step 4.
+
+**Different laptop:** a few things in the config are specific to the T490s:
+- **Hardware profile:** run `cat /sys/class/dmi/id/sys_vendor /sys/class/dmi/id/product_name`, find the matching profile in [nixos-hardware](https://github.com/NixOS/nixos-hardware/blob/master/flake.nix), and replace `lenovo-thinkpad-t490s` in `hosts/laptop/default.nix` (or remove the line if there is none).
+- **`modules/laptop.nix`:** drop the Goodix fingerprint driver (`tod.*` lines) unless `lsusb` shows a Goodix reader, and drop `thermald` on AMD CPUs.
+- **Keeping both machines:** copy `hosts/laptop/` to `hosts/<new-name>/`, set a new `networking.hostName` there, and add a second `nixosConfigurations.<new-name>` entry in `flake.nix` pointing at it. `--flake .` picks the entry that matches the hostname.
+
+### 4. First build
+Flakes aren't enabled on a fresh install yet, so turn them on for this one command:
+```
+export NIX_CONFIG="experimental-features = nix-command flakes"
+nixos-rebuild switch --flake . --sudo
+```
+Use `--sudo`, not `sudo nixos-rebuild`, so the repo doesn't end up root-owned. This build takes a while. From now on, use `rebuild`.
+
+### 5. Finish setup
+1. `touch ~/.zshrc` (skips the zsh new-user wizard), then **reboot**. That picks up zsh, groups, GNOME settings and session variables.
+2. **1Password:** sign in. Settings > Developer > Use the SSH agent. Settings > General > Start at login.
+3. **Test SSH and signing:** `ssh -T git@github.com`, then switch the repo to SSH: `git remote set-url origin git@github.com:<github-user>/nixos-config.git`
+4. **Fingerprint:** `fprintd-enroll`
+5. **Tailscale:** `sudo tailscale up` and log in. Accept-routes and operator are already set by the config.
+6. **Pre-commit hooks:** `cd ~/nixos-config && direnv allow`
+7. **Ghostty:** restore `~/.config/ghostty/config` (JetBrainsMono Nerd Font, size 12, padding 8, copy-on-select).
+8. **Ulauncher:** leave its own "Launch at login" off. A systemd user service starts it.
+9. **Commit the new hardware config:** `git commit -am "hardware config for <machine>" && git push`
+
+### 6. Check it worked
+| Check | Expect |
+|---|---|
+| `echo $SHELL` | `/run/current-system/sw/bin/zsh` |
+| `groups` | includes `wheel`, `networkmanager`, `kvm`, `wireshark`, `dialout` |
+| `git log --show-signature -1` | `Good "git" signature` |
+| `tailscale status` | your other devices listed |
+| Super+Space | Ulauncher opens |
+| `generations` | the new generation is current and the boot default |
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| Change didn't show up (icons, shell, env vars, groups, extensions) | Log out and back in |
+| GNOME setting from Nix ignored | A GUI-set value wins. `dconf read <key>`, then `dconf reset <key>` |
+| Super+Space stopped opening Ulauncher | Adding a shortcut in Settings > Keyboard rewrote the list. `dconf reset /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings` |
+| "GVariant type for number is unclear" | Wrap numbers in dconf settings: `lib.gvariant.mkInt32 48` |
+| Rebuild is slow | `nh os build ~/nixos-config` shows what's building. Hermes Agent and Claude Desktop build locally after `update` |
+| Hermes fails to build after `update` | Follow the comment on `hermes-agent` in `flake.nix` |
+| git push or commit signing fails | 1Password must be running and unlocked |
+| flake.lock or repo files owned by root | `sudo chown -R jdyer:users ~/nixos-config` |
+| Claude Code or Slack wants to self-update | Their updaters don't work on NixOS; `update` instead |
 
 ## Rules of thumb
-- `git add` new files before rebuilding. Flakes only see files git knows about.
+- `git add` new files before rebuilding.
 - Commit `flake.lock`. It pins exact versions so rebuilds are reproducible.
 - Never change `system.stateVersion` after install.
-- New concern = new module file in `modules/`, then add it to `imports` in `hosts/laptop/default.nix`.
-- After changing the shell, session variables, GNOME extensions or dconf defaults, log out and back in.
+- New concern = new file in `modules/` with a header comment, then add it to `imports` in `hosts/laptop/default.nix`.
+- Prefer NixOS options (`programs.<name>.enable`) over a bare package when one exists. They handle groups, wrappers and services for you.
