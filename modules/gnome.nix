@@ -13,6 +13,7 @@
     gnomeExtensions.dash-to-dock
     gnome-extension-manager
     ulauncher
+    wmctrl  # Fix for ulauncher https://github.com/Ulauncher/Ulauncher/wiki/Hotkey-In-Wayland
   ];
   # (Optional) Exclude default GNOME applications you don't want
   environment.gnome.excludePackages = with pkgs; [
