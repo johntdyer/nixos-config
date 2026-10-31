@@ -136,12 +136,7 @@ Public keys and your email are fine to commit. Never commit private keys, Tailsc
 ## Bootstrapping a new laptop
 
 ### 0. Before you start (on this laptop, once)
-The repo has to be somewhere the new machine can clone it from. Push it to a **private** GitHub repo:
-```
-cd ~/nixos-config
-gh repo create nixos-config --private --source . --push
-```
-Keep it pushed after each commit (`git push`).
+The repo has to be somewhere the new machine can clone it from. It lives at `github.com/johntdyer/nixos-config` (private). Keep it pushed after each commit (`git push`).
 
 ### 1. Install NixOS
 1. Boot the NixOS 26.05 graphical installer, pick GNOME, user `jdyer`, hostname `nixos`.
@@ -152,7 +147,7 @@ The fresh system has no git, gh or 1Password yet, so clone over HTTPS with a tem
 ```
 nix-shell -p git gh
 gh auth login            # GitHub.com > HTTPS > log in with a browser
-gh repo clone <github-user>/nixos-config ~/nixos-config
+gh repo clone johntdyer/nixos-config ~/nixos-config
 cd ~/nixos-config
 ```
 
@@ -180,7 +175,7 @@ Use `--sudo`, not `sudo nixos-rebuild`, so the repo doesn't end up root-owned. T
 ### 5. Finish setup
 1. `touch ~/.zshrc` (skips the zsh new-user wizard), then **reboot**. That picks up zsh, groups, GNOME settings and session variables.
 2. **1Password:** sign in. Settings > Developer > Use the SSH agent. Settings > General > Start at login.
-3. **Test SSH and signing:** `ssh -T git@github.com`, then switch the repo to SSH: `git remote set-url origin git@github.com:<github-user>/nixos-config.git`
+3. **Test SSH and signing:** `ssh -T git@github.com`, then switch the repo to SSH: `git remote set-url origin git@github.com:johntdyer/nixos-config.git`
 4. **Fingerprint:** `fprintd-enroll`
 5. **Tailscale:** `sudo tailscale up` and log in. Accept-routes and operator are already set by the config.
 6. **Pre-commit hooks:** `cd ~/nixos-config && direnv allow`
@@ -210,6 +205,7 @@ Use `--sudo`, not `sudo nixos-rebuild`, so the repo doesn't end up root-owned. T
 | Hermes fails to build after `update` | Follow the comment on `hermes-agent` in `flake.nix` |
 | git push or commit signing fails | 1Password must be running and unlocked |
 | flake.lock or repo files owned by root | `sudo chown -R jdyer:users ~/nixos-config` |
+| `direnv: ... is taking a while` when entering the repo | direnv is re-evaluating the dev shell because `flake.nix` or `flake.lock` changed. Let it finish (cached afterwards); Ctrl+C makes it start over next time. If `flake.lock` shows as modified, commit it |
 | Claude Code or Slack wants to self-update | Their updaters don't work on NixOS; `update` instead |
 
 ## Rules of thumb

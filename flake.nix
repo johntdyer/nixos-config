@@ -67,8 +67,12 @@
           gitleaks.enable = true;
           # Blocks private keys (-----BEGIN ... PRIVATE KEY-----).
           detect-private-keys.enable = true;
-          # Blocks accidentally committed big files (> 500 KB).
-          check-added-large-files.enable = true;
+          # Blocks accidentally committed big files (> 500 KB). Commit time
+          # only; by default it also runs on every `git push`, which is noise.
+          check-added-large-files = {
+            enable = true;
+            stages = [ "pre-commit" ];
+          };
           # Blocks leftover <<<<<<< / >>>>>>> merge markers.
           check-merge-conflicts.enable = true;
         };
