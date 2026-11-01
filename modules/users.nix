@@ -1,4 +1,4 @@
-# Your user account and its packages (no home-manager needed).
+# Your user account and its packages. Dotfiles are in home/ (home-manager).
 { pkgs, ... }:
 {
   users.users.jdyer = {

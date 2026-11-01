@@ -29,6 +29,13 @@
       # Reuse our nixpkgs instead of downloading and evaluating another copy.
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # User-level config (dotfiles under ~/.config). Used as a NixOS module, so
+    # `rebuild` applies system and user config together. The branch must match
+    # nixpkgs (release-26.05 for nixos-26.05).
+    home-manager = {
+      url = "github:nix-community/home-manager/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # Git pre-commit hooks for this repo (secret scanning). Not part of the
     # system: only used by the dev shell below.
     git-hooks = {
@@ -59,6 +66,7 @@
         modules = [
           ./hosts/laptop
           inputs.claude-desktop.nixosModules.default
+          inputs.home-manager.nixosModules.home-manager
         ];
       };
 

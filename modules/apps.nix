@@ -1,9 +1,8 @@
-# Desktop apps.
+# Desktop apps. (Ghostty is installed by home-manager: home/ghostty.nix.)
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
     google-chrome
-    ghostty
     tigervnc # remote desktop
     remmina # remote desktop
     freerdp # xfreerdp CLI

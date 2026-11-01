@@ -3,7 +3,7 @@
 Flake-based NixOS config for John's laptop: a Lenovo ThinkPad T490s (hostname `nixos`, user `jdyer`) running NixOS 26.05 with GNOME on Wayland.
 
 - Lives in `~/nixos-config` as a git repo. `/etc/nixos` is not used.
-- Flakes, no home-manager. Per-user settings (zsh, git, GNOME, autostart) are set system-wide with NixOS options.
+- Flakes, with home-manager as a NixOS module (one `rebuild` applies both). Most per-user settings (zsh, git, tmux, GNOME, autostart) are still NixOS options; programs move into `home/` one at a time. So far: Ghostty.
 - Rebuilds go through [nh](https://github.com/nix-community/nh), wrapped in shell aliases.
 
 ## Contents
@@ -90,6 +90,10 @@ modules/
   ssh.nix                    SSH client defaults (keepalive, connection reuse)
   neovim.nix                 Neovim + LazyVim tools, links ~/.config/nvim to config/nvim
   dropbox.nix                Dropbox client (user service) and CLI
+  home-manager.nix           home-manager settings, loads home/ for jdyer
+home/
+  default.nix                home.stateVersion, auto-imports the other files in home/
+  ghostty.nix                Ghostty package and ~/.config/ghostty/config (font, padding, SSH terminfo fallback)
 config/
   nvim/                      LazyVim config, symlinked to ~/.config/nvim (edit live, no rebuild)
 statix.toml                  statix lint settings
@@ -120,6 +124,7 @@ Each module starts with a one-line comment saying what it covers. Group membersh
 | `nixos-hardware` | NixOS/nixos-hardware | `lenovo-thinkpad-t490s` profile |
 | `hermes-agent` | NousResearch/hermes-agent | Follows `nixpkgs-unstable`; see the comment in `flake.nix` if it breaks |
 | `claude-desktop` | poeck/claude-desktop-nix-flake | Follows `nixpkgs` |
+| `home-manager` | nix-community/home-manager `release-26.05` | Follows `nixpkgs`; branch must match the nixpkgs release |
 | `git-hooks` | cachix/git-hooks.nix | Follows `nixpkgs`; repo pre-commit hooks only, not part of the system |
 
 New inputs that take `nixpkgs` should get `inputs.nixpkgs.follows`. Each extra nixpkgs copy slows every rebuild.
@@ -192,7 +197,7 @@ Use `--sudo`, not `sudo nixos-rebuild`, so the repo doesn't end up root-owned. T
 4. **Fingerprint:** `fprintd-enroll`
 5. **Tailscale:** `sudo tailscale up` and log in. Accept-routes and operator are already set by the config.
 6. **Pre-commit hooks:** `cd ~/nixos-config && direnv allow`
-7. **Ghostty:** restore `~/.config/ghostty/config` (JetBrainsMono Nerd Font, size 12, padding 8, copy-on-select).
+7. **Ghostty:** nothing to do, home-manager writes `~/.config/ghostty/config` (`home/ghostty.nix`).
 8. **Ulauncher:** leave its own "Launch at login" off. A systemd user service starts it.
 9. **Commit the new hardware config:** `git commit -am "hardware config for <machine>" && git push`
 
@@ -219,6 +224,8 @@ Use `--sudo`, not `sudo nixos-rebuild`, so the repo doesn't end up root-owned. T
 | git push or commit signing fails | 1Password must be running and unlocked |
 | flake.lock or repo files owned by root | `sudo chown -R jdyer:users ~/nixos-config` |
 | `direnv: ... is taking a while` when entering the repo | direnv is re-evaluating the dev shell because `flake.nix` or `flake.lock` changed. Let it finish (cached afterwards); Ctrl+C makes it start over next time. If `flake.lock` shows as modified, commit it |
+| Rebuild fails with "Existing file ... would be clobbered" | A file home-manager manages already exists and so does its `.hm-backup`. Compare them, delete the backup, rebuild |
+| Ghostty change didn't apply | Close all Ghostty windows (it keeps running as a user service), or `systemctl --user restart app-com.mitchellh.ghostty` |
 | Claude Code or Slack wants to self-update | Their updaters don't work on NixOS; `update` instead |
 
 ## Rules of thumb
@@ -226,4 +233,5 @@ Use `--sudo`, not `sudo nixos-rebuild`, so the repo doesn't end up root-owned. T
 - Commit `flake.lock`. It pins exact versions so rebuilds are reproducible.
 - Never change `system.stateVersion` after install.
 - New concern = new file in `modules/` with a header comment, then `git add` it. Every `.nix` file under `modules/` is imported automatically.
+- Dotfiles in `~/.config` go in `home/` (home-manager), same rules: one file per program, header comment, auto-imported. Never edit a home-manager file in `~/.config` by hand: it's a read-only link and the next rebuild replaces it.
 - Prefer NixOS options (`programs.<name>.enable`) over a bare package when one exists. They handle groups, wrappers and services for you.
