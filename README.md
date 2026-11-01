@@ -3,7 +3,7 @@
 Flake-based NixOS config for John's laptop: a Lenovo ThinkPad T490s (hostname `nixos`, user `jdyer`) running NixOS 26.05 with GNOME on Wayland.
 
 - Lives in `~/nixos-config` as a git repo. `/etc/nixos` is not used.
-- Flakes, with home-manager as a NixOS module (one `rebuild` applies both). Most per-user settings (zsh, git, tmux, GNOME, autostart) are still NixOS options; programs move into `home/` one at a time. So far: Ghostty.
+- Flakes, with home-manager as a NixOS module (one `rebuild` applies both). User dotfiles (zsh, git, tmux, SSH, Ghostty) are in `home/`; system-level things (GNOME dconf defaults, autostart services, Neovim) are still NixOS options.
 - Rebuilds go through [nh](https://github.com/nix-community/nh), wrapped in shell aliases.
 
 ## Contents
@@ -78,22 +78,23 @@ modules/
   gnome.nix                  GNOME, Files, Sushi, Dash to Dock, Ulauncher, dconf defaults
   users.nix                  the jdyer account
   1password.nix              1Password app + CLI, Chrome integration, SSH agent
-  git.nix                    git config, commit/tag signing with the 1Password SSH key
-  shell.nix                  zsh, oh-my-zsh plugins, Starship prompt, aliases, direnv
+  shell.nix                  zsh as the login shell (system side only)
   apps.nix                   desktop apps, Wayland flag for Electron/Chromium
   tailscale.nix              Tailscale, Trayscale GUI, systemd-resolved for MagicDNS
   network-tools.nix          dig, whois, mosh, Wireshark + tshark
   esphome.nix                ESPHome CLI, CuteCom, GTKTerm, USB serial access
   ai-tools.nix               Claude Desktop, Claude Code, Hermes Agent
   niri.nix                   niri compositor as an extra GDM session
-  tmux.nix                   tmux (ported from the Mac): Ctrl+Space prefix, Catppuccin, resurrect/continuum, SSH-aware splits
-  ssh.nix                    SSH client defaults (keepalive, connection reuse)
   neovim.nix                 Neovim + LazyVim tools, links ~/.config/nvim to config/nvim
   dropbox.nix                Dropbox client (user service) and CLI
   home-manager.nix           home-manager settings, loads home/ for jdyer
 home/
   default.nix                home.stateVersion, auto-imports the other files in home/
   ghostty.nix                Ghostty package and ~/.config/ghostty/config (font, padding, SSH terminfo fallback)
+  shell.nix                  zsh: oh-my-zsh plugins, 1M-line history (space-prefixed commands skipped), aliases, Starship, direnv
+  git.nix                    git config, commit/tag signing with the 1Password SSH key
+  tmux.nix                   tmux (ported from the Mac): Ctrl+Space prefix, Catppuccin, resurrect/continuum, SSH-aware splits
+  ssh.nix                    ~/.ssh/config: defaults for every host (keepalive, connection reuse), includes ~/.ssh/config.local
 config/
   nvim/                      LazyVim config, symlinked to ~/.config/nvim (edit live, no rebuild)
 statix.toml                  statix lint settings
@@ -191,7 +192,7 @@ nixos-rebuild switch --flake . --sudo
 Use `--sudo`, not `sudo nixos-rebuild`, so the repo doesn't end up root-owned. This build takes a while. From now on, use `rebuild`.
 
 ### 5. Finish setup
-1. `touch ~/.zshrc` (skips the zsh new-user wizard), then **reboot**. That picks up zsh, groups, GNOME settings and session variables.
+1. **Reboot**. That picks up zsh, groups, GNOME settings and session variables.
 2. **1Password:** sign in. Settings > Developer > Use the SSH agent. Settings > General > Start at login.
 3. **Test SSH and signing:** `ssh -T git@github.com`, then switch the repo to SSH: `git remote set-url origin git@github.com:johntdyer/nixos-config.git`
 4. **Fingerprint:** `fprintd-enroll`
@@ -233,5 +234,7 @@ Use `--sudo`, not `sudo nixos-rebuild`, so the repo doesn't end up root-owned. T
 - Commit `flake.lock`. It pins exact versions so rebuilds are reproducible.
 - Never change `system.stateVersion` after install.
 - New concern = new file in `modules/` with a header comment, then `git add` it. Every `.nix` file under `modules/` is imported automatically.
-- Dotfiles in `~/.config` go in `home/` (home-manager), same rules: one file per program, header comment, auto-imported. Never edit a home-manager file in `~/.config` by hand: it's a read-only link and the next rebuild replaces it.
+- Dotfiles go in `home/` (home-manager), same rules: one file per program, header comment, auto-imported. Never edit a home-manager file in `~/.config` by hand: it's a read-only link and the next rebuild replaces it.
+- Personal SSH hosts go in `~/.ssh/config.local` (not in the repo, which is public). `~/.ssh/config` is managed by `home/ssh.nix` and includes it.
+- A command typed with a leading space is not saved to zsh history (use it for anything with a secret in it).
 - Prefer NixOS options (`programs.<name>.enable`) over a bare package when one exists. They handle groups, wrappers and services for you.

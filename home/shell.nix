@@ -1,0 +1,73 @@
+# Zsh: oh-my-zsh plugins, history, aliases, Starship prompt and direnv.
+{ config, pkgs, ... }:
+{
+  home.packages = [ pkgs.fzf ]; # oh-my-zsh fzf plugin, extrakto, tmux-fzf
+
+  programs.zsh = {
+    enable = true;
+    # Keep ~/.zshrc and ~/.zshenv in $HOME (stateVersion 26.05 would move
+    # them to ~/.config/zsh if xdg.enable were ever turned on).
+    dotDir = config.home.homeDirectory;
+    enableCompletion = true;
+    autosuggestion.enable = true; # grey "ghost" suggestions from history
+    syntaxHighlighting.enable = true; # colors valid/invalid commands as you type
+
+    history = {
+      path = "${config.home.homeDirectory}/.zsh_history"; # same file as before
+      size = 1000000; # lines kept in memory
+      save = 1000000; # lines kept in the file
+      ignoreSpace = true; # a command starting with a space is not saved
+      ignoreDups = true; # skip a command identical to the previous one
+      expireDuplicatesFirst = true; # when trimming, drop duplicates first
+      extended = true; # save timestamps (`history -i` shows them)
+      share = true; # all open shells share one history
+    };
+
+    oh-my-zsh = {
+      enable = true;
+      # No theme: Starship draws the prompt.
+      theme = "";
+      plugins = [
+        "git" # git aliases (gst, gco, gp ...)
+        "sudo" # press Esc twice to prefix the last command with sudo
+        "z" # jump to frequent dirs: `z nixos`
+        "history"
+        "colored-man-pages"
+        "fzf" # Ctrl+R fuzzy history search
+      ];
+    };
+
+    shellAliases = {
+      rebuild = "nh os switch ~/nixos-config";
+      rebuild-test = "nh os test ~/nixos-config";
+      # Updates flake.lock and rebuilds. Commit flake.lock afterwards.
+      update = "nh os switch --update ~/nixos-config";
+      # Switch back to the previous generation (system and home-manager files;
+      # the repo is untouched, so `git restore` or fix it before the next rebuild).
+      rollback = "nh os rollback";
+      # List generations, with the running and boot-default ones marked.
+      generations = "nh os info";
+    };
+  };
+
+  # Starship prompt. Config is generated from the settings below; a
+  # hand-made ~/.config/starship.toml would conflict with it.
+  # Options: https://starship.rs/config/
+  programs.starship = {
+    enable = true;
+    # Nerd Font icons for git, languages, nix shells, etc. (Ghostty uses
+    # JetBrainsMono Nerd Font).
+    presets = [ "nerd-font-symbols" ];
+    settings = {
+      # No blank line between prompts.
+      add_newline = false;
+    };
+  };
+
+  # Per-project dev shells: put `use flake` in a project's .envrc, then
+  # `direnv allow`. nix-direnv caches the shell so it loads instantly.
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
+}
