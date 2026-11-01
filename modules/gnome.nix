@@ -28,6 +28,7 @@
   environment.systemPackages = with pkgs; [
     pantheon.elementary-files # Finder-style column view
     gnomeExtensions.dash-to-dock
+    gnomeExtensions.appindicator # tray icons (Dropbox, Trayscale)
     gnome-extension-manager
     ulauncher
     wmctrl # needed for Ulauncher on Wayland: https://github.com/Ulauncher/Ulauncher/wiki/Hotkey-In-Wayland
@@ -46,6 +47,7 @@
         "org/gnome/shell" = {
           enabled-extensions = [
             pkgs.gnomeExtensions.dash-to-dock.extensionUuid
+            pkgs.gnomeExtensions.appindicator.extensionUuid
           ];
         };
 

@@ -34,6 +34,10 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  # Lets prebuilt Linux binaries run (Mason language servers, VS Code helpers,
+  # npm/pip packages with native code).
+  programs.nix-ld.enable = true;
+
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.configurationLimit = 10; # boot menu entries kept
   boot.loader.efi.canTouchEfiVariables = true;
@@ -56,7 +60,6 @@
 
   environment.systemPackages = with pkgs; [
     git
-    vim
     curl
     wget
     htop
