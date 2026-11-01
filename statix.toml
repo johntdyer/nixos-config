@@ -1,0 +1,4 @@
+# statix lint settings (used by the pre-commit hook).
+# repeated_keys (W20) is off: flat lines like `services.foo.enable = true;`
+# are easier to read and diff than nesting everything under one `services = { }`.
+disabled = [ "repeated_keys" ]

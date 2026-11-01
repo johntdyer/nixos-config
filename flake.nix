@@ -37,14 +37,21 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, ... }@inputs:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixpkgs-unstable,
+      ...
+    }@inputs:
     let
       system = "x86_64-linux";
       pkgs-unstable = import nixpkgs-unstable {
         inherit system;
         config.allowUnfree = true;
       };
-    in {
+    in
+    {
       # Named after networking.hostName, so plain `--flake .` finds it.
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
         inherit system;
@@ -55,7 +62,8 @@
         ];
       };
 
-      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-rfc-style;
+      # nixfmt-tree formats the whole repo when `nix fmt` runs with no arguments.
+      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-tree;
 
       # Pre-commit hooks. Installed into .git/hooks automatically when direnv
       # loads the dev shell (cd into the repo). Run against every file with
@@ -75,6 +83,18 @@
           };
           # Blocks leftover <<<<<<< / >>>>>>> merge markers.
           check-merge-conflicts.enable = true;
+          # Nix lint: flags anti-patterns (statix) and unused bindings (deadnix).
+          # hardware-configuration.nix is generated, so it's not linted.
+          statix = {
+            enable = true;
+            settings.ignore = [ "hosts/laptop/hardware-configuration.nix" ];
+          };
+          deadnix = {
+            enable = true;
+            excludes = [ "hosts/laptop/hardware-configuration\\.nix" ];
+          };
+          # Same formatter as `nix fmt`.
+          nixfmt.enable = true;
         };
       };
 

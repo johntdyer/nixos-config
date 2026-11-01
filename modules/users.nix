@@ -1,10 +1,15 @@
 # Your user account and its packages (no home-manager needed).
-{ pkgs, pkgs-unstable, ... }:
+{ pkgs, ... }:
 {
   users.users.jdyer = {
     isNormalUser = true;
     description = "John Dyer";
-    extraGroups = [ "wheel" "networkmanager" "video" "audio" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "video"
+      "audio"
+    ];
     shell = pkgs.zsh;
     packages = with pkgs; [
       vscode

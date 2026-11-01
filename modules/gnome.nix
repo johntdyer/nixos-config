@@ -26,11 +26,11 @@
   };
 
   environment.systemPackages = with pkgs; [
-    pantheon.elementary-files     # Finder-style column view
+    pantheon.elementary-files # Finder-style column view
     gnomeExtensions.dash-to-dock
     gnome-extension-manager
     ulauncher
-    wmctrl  # needed for Ulauncher on Wayland: https://github.com/Ulauncher/Ulauncher/wiki/Hotkey-In-Wayland
+    wmctrl # needed for Ulauncher on Wayland: https://github.com/Ulauncher/Ulauncher/wiki/Hotkey-In-Wayland
   ];
 
   environment.gnome.excludePackages = with pkgs; [
@@ -39,40 +39,42 @@
   ];
 
   # GNOME settings defaults. Anything you change in the GUI overrides these.
-  programs.dconf.profiles.user.databases = [{
-    settings = {
-      # Turn on extensions declaratively.
-      "org/gnome/shell" = {
-        enabled-extensions = [
-          pkgs.gnomeExtensions.dash-to-dock.extensionUuid
-        ];
-      };
+  programs.dconf.profiles.user.databases = [
+    {
+      settings = {
+        # Turn on extensions declaratively.
+        "org/gnome/shell" = {
+          enabled-extensions = [
+            pkgs.gnomeExtensions.dash-to-dock.extensionUuid
+          ];
+        };
 
-      # Mac-like dock.
-      "org/gnome/shell/extensions/dash-to-dock" = {
-        dock-position = "BOTTOM";
-        dash-max-icon-size = lib.gvariant.mkInt32 48;
-        intellihide = true;
-        show-apps-at-top = false;
-      };
+        # Mac-like dock.
+        "org/gnome/shell/extensions/dash-to-dock" = {
+          dock-position = "BOTTOM";
+          dash-max-icon-size = lib.gvariant.mkInt32 48;
+          intellihide = true;
+          show-apps-at-top = false;
+        };
 
-      # Super+Space opens Ulauncher (Wayland needs a GNOME shortcut for this).
-      "org/gnome/settings-daemon/plugins/media-keys" = {
-        custom-keybindings = [
-          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ulauncher/"
-        ];
-      };
-      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ulauncher" = {
-        name = "Ulauncher";
-        command = "ulauncher-toggle";
-        binding = "<Super>space";
-      };
+        # Super+Space opens Ulauncher (Wayland needs a GNOME shortcut for this).
+        "org/gnome/settings-daemon/plugins/media-keys" = {
+          custom-keybindings = [
+            "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ulauncher/"
+          ];
+        };
+        "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ulauncher" = {
+          name = "Ulauncher";
+          command = "ulauncher-toggle";
+          binding = "<Super>space";
+        };
 
-      # Free up Super+Space (GNOME uses it to switch input sources by default).
-      "org/gnome/desktop/wm/keybindings" = {
-        switch-input-source = lib.gvariant.mkEmptyArray lib.gvariant.type.string;
-        switch-input-source-backward = lib.gvariant.mkEmptyArray lib.gvariant.type.string;
+        # Free up Super+Space (GNOME uses it to switch input sources by default).
+        "org/gnome/desktop/wm/keybindings" = {
+          switch-input-source = lib.gvariant.mkEmptyArray lib.gvariant.type.string;
+          switch-input-source-backward = lib.gvariant.mkEmptyArray lib.gvariant.type.string;
+        };
       };
-    };
-  }];
+    }
+  ];
 }

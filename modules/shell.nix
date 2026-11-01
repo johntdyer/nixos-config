@@ -5,8 +5,8 @@
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    autosuggestions.enable = true;      # grey "ghost" suggestions from history
-    syntaxHighlighting.enable = true;   # colors valid/invalid commands as you type
+    autosuggestions.enable = true; # grey "ghost" suggestions from history
+    syntaxHighlighting.enable = true; # colors valid/invalid commands as you type
 
     ohMyZsh = {
       enable = true;
@@ -14,12 +14,12 @@
       # "robbyrussell" and disable programs.starship below.
       theme = "";
       plugins = [
-        "git"          # git aliases (gst, gco, gp ...)
-        "sudo"         # press Esc twice to prefix the last command with sudo
-        "z"            # jump to frequent dirs: `z nixos`
+        "git" # git aliases (gst, gco, gp ...)
+        "sudo" # press Esc twice to prefix the last command with sudo
+        "z" # jump to frequent dirs: `z nixos`
         "history"
         "colored-man-pages"
-        "fzf"          # Ctrl+R fuzzy history search
+        "fzf" # Ctrl+R fuzzy history search
       ];
     };
 

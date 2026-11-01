@@ -2,8 +2,14 @@
 { pkgs, ... }:
 {
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
-    trusted-users = [ "root" "@wheel" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+    trusted-users = [
+      "root"
+      "@wheel"
+    ];
     # You rebuild before committing, so the "Git tree is dirty" warning is noise.
     warn-dirty = false;
   };
@@ -29,7 +35,7 @@
   nixpkgs.config.allowUnfree = true;
 
   boot.loader.systemd-boot.enable = true;
-  boot.loader.systemd-boot.configurationLimit = 10;  # boot menu entries kept
+  boot.loader.systemd-boot.configurationLimit = 10; # boot menu entries kept
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.networkmanager.enable = true;
@@ -57,8 +63,8 @@
     ripgrep
     fd
     jq
-    nvd                 # package diff between generations
-    nix-output-monitor  # prettier build output (`nom`)
+    nvd # package diff between generations
+    nix-output-monitor # prettier build output (`nom`)
   ];
 
   # `nh os switch` = rebuild with a diff; `nh clean all` = tidy old generations.

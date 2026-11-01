@@ -1,5 +1,10 @@
 # AI tools: Claude Desktop, Claude Code, Hermes Agent.
-{ pkgs, pkgs-unstable, inputs, ... }:
+{
+  pkgs,
+  pkgs-unstable,
+  inputs,
+  ...
+}:
 {
   # Claude Desktop runs local file work in a QEMU/KVM VM.
   users.users.jdyer.extraGroups = [ "kvm" ];

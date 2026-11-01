@@ -1,6 +1,5 @@
 # 1Password: CLI, desktop app, browser integration and SSH agent.
-{ ... }:
-{
+_: {
   programs._1password.enable = true;
   programs._1password-gui = {
     enable = true;
