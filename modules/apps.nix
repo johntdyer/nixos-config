@@ -8,6 +8,7 @@
     freerdp # xfreerdp CLI
     slack
     telegram-desktop
+    discord
   ];
 
   # Run Electron and Chromium apps (Slack, VS Code, Chrome) natively on

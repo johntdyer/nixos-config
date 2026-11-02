@@ -87,6 +87,7 @@ modules/
   niri.nix                   niri compositor as an extra GDM session
   neovim.nix                 Neovim + LazyVim tools, links ~/.config/nvim to config/nvim
   dropbox.nix                Dropbox client (user service) and CLI
+  filesystems.nix            APFS (Mac USB drives): kernel module + apfs-fuse fallback
   home-manager.nix           home-manager settings, loads home/ for jdyer
 home/
   default.nix                home.stateVersion, auto-imports the other files in home/
@@ -95,6 +96,7 @@ home/
   git.nix                    git config, commit/tag signing with the 1Password SSH key
   tmux.nix                   tmux (ported from the Mac): Ctrl+Space prefix, Catppuccin, resurrect/continuum, SSH-aware splits
   ssh.nix                    ~/.ssh/config: defaults for every host (keepalive, connection reuse), includes ~/.ssh/config.local
+  hermes.nix                 HERMES_DESKTOP_REMOTE_URL for Hermes Desktop's remote gateway
 config/
   nvim/                      LazyVim config, symlinked to ~/.config/nvim (edit live, no rebuild)
 statix.toml                  statix lint settings
@@ -110,7 +112,7 @@ Each module starts with a one-line comment saying what it covers. Group membersh
 | Shell | zsh, oh-my-zsh plugins (git, sudo, z, history, colored-man-pages, fzf), autosuggestions, syntax highlighting, Starship prompt (Nerd Font symbols), direnv + nix-direnv |
 | CLI | git, Neovim (LazyVim, `vi`/`vim` aliases), tmux, curl, wget, htop, ripgrep, fd, jq, fzf, nvd, nix-output-monitor |
 | Network | Tailscale + Trayscale, dig, whois, mosh, Wireshark, tshark |
-| Apps | Google Chrome, Firefox, Ghostty, Slack, Telegram, VS Code, Dropbox, Remmina, TigerVNC, FreeRDP |
+| Apps | Google Chrome, Firefox, Ghostty, Slack, Telegram, Discord, VS Code, Dropbox, Remmina, TigerVNC, FreeRDP |
 | Security | 1Password (app, CLI, SSH agent, git signing) |
 | AI | Claude Desktop, Claude Code (from unstable), Hermes Agent |
 | Hardware | nixos-hardware T490s profile, fingerprint reader, firmware updates, power profiles |

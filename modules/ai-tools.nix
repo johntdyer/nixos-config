@@ -25,8 +25,5 @@
     inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.desktop
   ];
 
-  # Optional: pin the remote backend instead of setting it in the app. This
-  # overrides the in-app setting for every profile, and the repo is public,
-  # so a tailnet hostname is better than an IP here.
-  # environment.sessionVariables.HERMES_DESKTOP_REMOTE_URL = "http://<host>:9119";
+  # Remote backend URL for Hermes Desktop is set per user in home/hermes.nix.
 }
