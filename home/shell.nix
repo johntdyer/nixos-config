@@ -38,6 +38,14 @@
     };
 
     shellAliases = {
+
+      # NIXOS_OZONE_WL=1 (modules/apps.nix) makes the nixpkgs VS Code wrapper add
+      # Wayland flags (--ozone-platform-hint, --enable-features, --enable-wayland-ime,
+      # --wayland-text-input-version). The `code` CLI doesn't recognize them, so it
+      # prints one warning per flag before passing them to Electron anyway. This
+      # filters out only those warnings. Any other stderr output still shows.
+      code = ''command code 2> >(grep -v "is not in the list of known options" >&2)'';
+
       rebuild = "nh os switch ~/nixos-config";
       rebuild-test = "nh os test ~/nixos-config";
       # Updates flake.lock and rebuilds. Commit flake.lock afterwards.
