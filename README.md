@@ -97,6 +97,8 @@ home/
   tmux.nix                   tmux (ported from the Mac): Ctrl+Space prefix, Catppuccin, resurrect/continuum, SSH-aware splits
   ssh.nix                    ~/.ssh/config: defaults for every host (keepalive, connection reuse), includes ~/.ssh/config.local
   hermes.nix                 HERMES_DESKTOP_REMOTE_URL for Hermes Desktop's remote gateway
+  home-assistant-cli.nix     hass-cli; server + 1Password token ref in ~/.config/hass-cli/env (not in repo)
+  gmailctl.nix               gmailctl; config and OAuth files in ~/.gmailctl (not in repo)
   update-notifier.nix        nixos-update-notifier tray icon: checks every 6h whether `update` would change the system (Adwaita icons)
 config/
   nvim/                      LazyVim config, symlinked to ~/.config/nvim (edit live, no rebuild)
