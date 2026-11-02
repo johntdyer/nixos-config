@@ -97,6 +97,7 @@ home/
   tmux.nix                   tmux (ported from the Mac): Ctrl+Space prefix, Catppuccin, resurrect/continuum, SSH-aware splits
   ssh.nix                    ~/.ssh/config: defaults for every host (keepalive, connection reuse), includes ~/.ssh/config.local
   hermes.nix                 HERMES_DESKTOP_REMOTE_URL for Hermes Desktop's remote gateway
+  update-notifier.nix        nixos-update-notifier tray icon: checks every 6h whether `update` would change the system (Adwaita icons)
 config/
   nvim/                      LazyVim config, symlinked to ~/.config/nvim (edit live, no rebuild)
 statix.toml                  statix lint settings
@@ -129,6 +130,7 @@ Each module starts with a one-line comment saying what it covers. Group membersh
 | `claude-desktop` | poeck/claude-desktop-nix-flake | Follows `nixpkgs` |
 | `home-manager` | nix-community/home-manager `release-26.05` | Follows `nixpkgs`; branch must match the nixpkgs release |
 | `git-hooks` | cachix/git-hooks.nix | Follows `nixpkgs`; repo pre-commit hooks only, not part of the system |
+| `nixos-update-notifier` | stuckj/nixos-update-notifier | Follows `nixpkgs`; home-manager module in `home/update-notifier.nix` |
 
 New inputs that take `nixpkgs` should get `inputs.nixpkgs.follows`. Each extra nixpkgs copy slows every rebuild.
 

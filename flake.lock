@@ -91,11 +91,11 @@
         "uv2nix": "uv2nix"
       },
       "locked": {
-        "lastModified": 1793441029,
-        "narHash": "sha256-C+2xwniTgb6YY5AGDPgqDVQcVSImgUVzDWVYztRgE1Q=",
+        "lastModified": 1793622240,
+        "narHash": "sha256-fFwzdm1qyv5oDVlJmxmm/m1KDFh0VV1jtYpKnYK/RYk=",
         "owner": "NousResearch",
         "repo": "hermes-agent",
-        "rev": "c419cf7c864ac0ee511dbd9f7091a8bba0b567ee",
+        "rev": "2b31d7b283191b8069311fd3514ee89419f76516",
         "type": "github"
       },
       "original": {
@@ -165,6 +165,26 @@
         "type": "github"
       }
     },
+    "nixos-update-notifier": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786125245,
+        "narHash": "sha256-rY/O6ysdBdSSqoXMHIFCKyRhC2NZPgNcGWCIMx0SnkY=",
+        "owner": "stuckj",
+        "repo": "nixos-update-notifier",
+        "rev": "490888f752b33e56fbc5c21ae57196c676011295",
+        "type": "github"
+      },
+      "original": {
+        "owner": "stuckj",
+        "repo": "nixos-update-notifier",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1789546076,
@@ -180,11 +200,11 @@
     },
     "nixpkgs-unstable": {
       "locked": {
-        "lastModified": 1793341285,
-        "narHash": "sha256-Y1CiZ4SoBUjLQyQM/pY+rS2dXD3CHLPstF0lmOc73D4=",
+        "lastModified": 1793540411,
+        "narHash": "sha256-fiPJ88izTVucjeo2EQ3jk4aWmLg03I1D4vxnX2QjEgE=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "1c89083e451e891152365b799595cf7790a43325",
+        "rev": "0bb2eedc20e4739f29e8045034f2828ad7054f8f",
         "type": "github"
       },
       "original": {
@@ -196,11 +216,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1793294725,
-        "narHash": "sha256-loLMnbbS4KhmG2ln9EY6f0YMNCA273Yx02oWYQ9IMeE=",
+        "lastModified": 1793526781,
+        "narHash": "sha256-2Cxxgpz1+cRgKZJFi12/9LG3aIBN66f2RvFs34Oj/A0=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "6f06d204d8f2d8761d9da78778745974a3216381",
+        "rev": "9bb52223f4f6a0cc606fd0852d8784f896c137d5",
         "type": "github"
       },
       "original": {
@@ -288,6 +308,7 @@
         "hermes-agent": "hermes-agent",
         "home-manager": "home-manager_2",
         "nixos-hardware": "nixos-hardware",
+        "nixos-update-notifier": "nixos-update-notifier",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-unstable": "nixpkgs-unstable"
       }

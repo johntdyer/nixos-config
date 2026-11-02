@@ -4,3 +4,5 @@
 /.direnv/
 # Vim swap files.
 *.swp
+# nixos-update-notifier backs up flake.lock before applying (keeps 3).
+flake.lock.bak.*

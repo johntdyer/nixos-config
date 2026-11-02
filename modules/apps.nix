@@ -7,7 +7,10 @@
     remmina # remote desktop
     freerdp # xfreerdp CLI
     slack
+    ncdu
+    baobab # Disk usage
     telegram-desktop
+    valhalla # Wallpapers
     discord
   ];
 

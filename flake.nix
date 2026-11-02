@@ -42,6 +42,15 @@
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Tray icon that checks whether `update` would change the system and
+    # shows a package diff. Used via its home-manager module (home/
+    # update-notifier.nix). Its modules build the package from our pkgs, so
+    # follows only matters for packages.<system>.default, but it keeps
+    # flake.lock at two nixpkgs copies.
+    nixos-update-notifier = {
+      url = "github:stuckj/nixos-update-notifier";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
