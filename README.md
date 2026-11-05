@@ -115,7 +115,7 @@ Each module starts with a one-line comment saying what it covers. Group membersh
 | Shell | zsh, oh-my-zsh plugins (git, sudo, z, history, colored-man-pages, fzf), autosuggestions, syntax highlighting, Starship prompt (Nerd Font symbols), direnv + nix-direnv |
 | CLI | git, Neovim (LazyVim, `vi`/`vim` aliases), tmux, curl, wget, htop, ripgrep, fd, jq, fzf, nvd, nix-output-monitor |
 | Network | Tailscale + Trayscale, dig, whois, mosh, Wireshark, tshark |
-| Apps | Google Chrome, Firefox, Ghostty, Slack, Telegram, Discord, VS Code, Dropbox, Remmina, TigerVNC, FreeRDP |
+| Apps | Google Chrome, Firefox, Ghostty, Slack, Telegram, Discord, Zoom, VS Code, Dropbox, Remmina, TigerVNC, FreeRDP |
 | Security | 1Password (app, CLI, SSH agent, git signing) |
 | AI | Claude Desktop, Claude Code (from unstable), Hermes Agent |
 | Hardware | nixos-hardware T490s profile, fingerprint reader, firmware updates, power profiles |

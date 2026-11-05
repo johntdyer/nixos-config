@@ -12,6 +12,7 @@
     telegram-desktop
     valhalla # Wallpapers
     discord
+    zoom-us # Zoom desktop app (`zoom` from a terminal)
   ];
 
   # Run Electron and Chromium apps (Slack, VS Code, Chrome) natively on
