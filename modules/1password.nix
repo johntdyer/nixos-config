@@ -1,5 +1,6 @@
 # 1Password: CLI, desktop app, browser integration and SSH agent.
-_: {
+{ config, lib, ... }:
+{
   programs._1password.enable = true;
   programs._1password-gui = {
     enable = true;
@@ -12,6 +13,21 @@ _: {
       chrome
     '';
     mode = "0755";
+  };
+  # Start 1Password with the session so the SSH agent socket
+  # (~/.1password/agent.sock) exists. Keep 1Password's own "Start at login"
+  # OFF: it writes a /nix/store path into ~/.config/autostart that breaks
+  # after updates and garbage collection.
+  systemd.user.services._1password = {
+    description = "1Password";
+    wantedBy = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      # --silent starts it in the tray, without opening the window.
+      ExecStart = "${lib.getExe' config.programs._1password-gui.package "1password"} --silent";
+      Restart = "on-failure";
+    };
   };
 
   # Use 1Password's SSH agent for every host.

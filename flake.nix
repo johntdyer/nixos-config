@@ -59,6 +59,13 @@
     # release binary, so no nixpkgs follows. Used via its home-manager module
     # (home/rex.nix).
     rex.url = "https://pkgs.superlogical.com/rex/nix/snapshot.tar.gz";
+    # Rex Linux: unofficial third-party GUI client (home/rex-linux.nix).
+    # Temporary. Pinned to a reviewed commit, since it's early-stage code from
+    # one developer that talks to our Rex servers; bump the rev by hand.
+    # No follows on purpose: upstream needs its newer nixpkgs-unstable Rust
+    # and Zig 0.17, so this adds a third nixpkgs copy to flake.lock and is
+    # built locally (Rust + Zig + Ghostty, with tests), not from a cache.
+    rex-rune.url = "github:shuv1337/rex-rune/d0547f79292bb3cc6bdbd9267f7db25313842380";
   };
 
   outputs =

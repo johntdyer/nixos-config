@@ -77,7 +77,7 @@ modules/
   desktop.nix                keyboard, PipeWire, printing, Firefox, fonts
   gnome.nix                  GNOME, Files, Sushi, Dash to Dock, Ulauncher, dconf defaults
   users.nix                  the jdyer account
-  1password.nix              1Password app + CLI, Chrome integration, SSH agent
+  1password.nix              1Password app + CLI, Chrome integration, SSH agent, starts at login (user service)
   shell.nix                  zsh as the login shell (system side only)
   apps.nix                   desktop apps, Wayland flag for Electron/Chromium
   tailscale.nix              Tailscale, Trayscale GUI, systemd-resolved for MagicDNS
@@ -100,7 +100,8 @@ home/
   home-assistant-cli.nix     hass-cli; server + 1Password token ref in ~/.config/hass-cli/env (not in repo)
   gmailctl.nix               gmailctl; config and OAuth files in ~/.gmailctl (not in repo)
   update-notifier.nix        nixos-update-notifier tray icon: checks every 6h whether `update` would change the system (Adwaita icons)
-  rex.nix                    Rex: rex CLI, xterm-rex terminfo, SSH fallback, personal server (systemd user service `rex`)
+  rex.nix                    Rex client: rex CLI, xterm-rex terminfo, SSH fallback, init.lua loading remote hosts from ~/.config/rex/hosts.lua (not in repo)
+  rex-linux.nix              Rex Linux (unofficial GUI client, temporary); hosts in ~/.config/rex-linux/workspace.json
 config/
   nvim/                      LazyVim config, symlinked to ~/.config/nvim (edit live, no rebuild)
 statix.toml                  statix lint settings
@@ -115,8 +116,8 @@ Each module starts with a one-line comment saying what it covers. Group membersh
 | Desktop | GNOME (Wayland), elementary Files, Sushi (Space to preview), Dash to Dock, Ulauncher on Super+Space |
 | Shell | zsh, oh-my-zsh plugins (git, sudo, z, history, colored-man-pages, fzf), autosuggestions, syntax highlighting, Starship prompt (Nerd Font symbols), direnv + nix-direnv |
 | CLI | git, Neovim (LazyVim, `vi`/`vim` aliases), tmux, curl, wget, htop, ripgrep, fd, jq, fzf, nvd, nix-output-monitor |
-| Network | Tailscale + Trayscale, dig, whois, mosh, Rex (personal server), Wireshark, tshark |
-| Apps | Google Chrome, Firefox, Ghostty, Slack, Telegram, Discord, Zoom, VS Code, Dropbox, Remmina, TigerVNC, FreeRDP |
+| Network | Tailscale + Trayscale, dig, whois, mosh, Rex (client, remote hosts in ~/.config/rex/hosts.lua), Wireshark, tshark |
+| Apps | Rex Linux (temporary), Google Chrome, Firefox, Ghostty, Slack, Telegram, Discord, Zoom, VS Code, Dropbox, Remmina, TigerVNC, FreeRDP |
 | Security | 1Password (app, CLI, SSH agent, git signing) |
 | AI | Claude Desktop, Claude Code (from unstable), Hermes Agent |
 | Hardware | nixos-hardware T490s profile, fingerprint reader, firmware updates, power profiles |
@@ -135,6 +136,7 @@ Each module starts with a one-line comment saying what it covers. Group membersh
 | `git-hooks` | cachix/git-hooks.nix | Follows `nixpkgs`; repo pre-commit hooks only, not part of the system |
 | `nixos-update-notifier` | stuckj/nixos-update-notifier | Follows `nixpkgs`; home-manager module in `home/update-notifier.nix` |
 | `rex` | pkgs.superlogical.com/rex/nix/snapshot.tar.gz | Snapshot channel (no stable Linux build yet); prebuilt binary, no follows; home-manager module in `home/rex.nix`; `nix flake update rex` to upgrade |
+| `rex-rune` | shuv1337/rex-rune (pinned commit) | Unofficial Rex Linux GUI, temporary; no follows (needs its own Rust/Zig), built locally; `home/rex-linux.nix` |
 
 New inputs that take `nixpkgs` should get `inputs.nixpkgs.follows`. Each extra nixpkgs copy slows every rebuild.
 
@@ -201,7 +203,7 @@ Use `--sudo`, not `sudo nixos-rebuild`, so the repo doesn't end up root-owned. T
 
 ### 5. Finish setup
 1. **Reboot**. That picks up zsh, groups, GNOME settings and session variables.
-2. **1Password:** sign in. Settings > Developer > Use the SSH agent. Settings > General > Start at login.
+2. **1Password:** sign in. Settings > Developer > Use the SSH agent. Leave Settings > General > Start at login off: a systemd user service starts it (`modules/1password.nix`).
 3. **Test SSH and signing:** `ssh -T git@github.com`, then switch the repo to SSH: `git remote set-url origin git@github.com:johntdyer/nixos-config.git`
 4. **Fingerprint:** `fprintd-enroll`
 5. **Tailscale:** `sudo tailscale up` and log in. Accept-routes and operator are already set by the config.
@@ -230,7 +232,7 @@ Use `--sudo`, not `sudo nixos-rebuild`, so the repo doesn't end up root-owned. T
 | "GVariant type for number is unclear" | Wrap numbers in dconf settings: `lib.gvariant.mkInt32 48` |
 | Rebuild is slow | `nh os build ~/nixos-config` shows what's building. Hermes Agent and Claude Desktop build locally after `update` |
 | Hermes fails to build after `update` | Follow the comment on `hermes-agent` in `flake.nix` |
-| git push or commit signing fails | 1Password must be running and unlocked |
+| git push or commit signing fails | 1Password must be running and unlocked. `systemctl --user status _1password`, and `ssh-add -l` should list your keys |
 | flake.lock or repo files owned by root | `sudo chown -R jdyer:users ~/nixos-config` |
 | `direnv: ... is taking a while` when entering the repo | direnv is re-evaluating the dev shell because `flake.nix` or `flake.lock` changed. Let it finish (cached afterwards); Ctrl+C makes it start over next time. If `flake.lock` shows as modified, commit it |
 | Rebuild fails with "Existing file ... would be clobbered" | A file home-manager manages already exists and so does its `.hm-backup`. Compare them, delete the backup, rebuild |
