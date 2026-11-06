@@ -1,13 +1,19 @@
-# Rex (superlogical.com/rex): rex CLI, xterm-rex terminfo, SSH fallback, and ~/.config/rex/init.lua with remote hosts from an untracked hosts.lua.
+# Rex (superlogical.com/rex): rex CLI, xterm-rex terminfo, SSH fallback, local personal server, and ~/.config/rex/init.lua with remote hosts from an untracked hosts.lua.
 { config, inputs, ... }:
 {
   imports = [ inputs.rex.homeManagerModules.default ];
 
   # Installs rex, the xterm-rex terminfo entry, and an SSH fallback to
   # xterm-256color for hosts without it (needs programs.ssh.enable, set in
-  # home/ssh.nix). No services.rex: nothing is exposed, and any rex command
-  # starts a local personal server on demand (it exits ~10s after last use).
+  # home/ssh.nix).
   programs.rex.enable = true;
+
+  # Personal server as a systemd user service (`rex`), started at login and
+  # stopped at logout (`loginctl enable-linger jdyer` keeps it running).
+  # Local only: listens on /run/user/1000/rex/server.sock, nothing on the
+  # network. Needed by Rex Linux (home/rex-linux.nix), which never starts a
+  # server itself.
+  services.rex.enable = true;
 
   # Read-only link into the store: change it here, not in place.
   # Remote hosts are personal, so they live in ~/.config/rex/hosts.lua (not in

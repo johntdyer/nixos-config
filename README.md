@@ -94,13 +94,14 @@ home/
   ghostty.nix                Ghostty package and ~/.config/ghostty/config (font, padding, SSH terminfo fallback)
   shell.nix                  zsh: oh-my-zsh plugins, 1M-line history (space-prefixed commands skipped), aliases, Starship, direnv
   git.nix                    git config, commit/tag signing with the 1Password SSH key
+  gh.nix                     GitHub CLI (gh), SSH as git protocol; log in once with `gh auth login`
   tmux.nix                   tmux (ported from the Mac): Ctrl+Space prefix, Catppuccin, resurrect/continuum, SSH-aware splits
   ssh.nix                    ~/.ssh/config: defaults for every host (keepalive, connection reuse), includes ~/.ssh/config.local
   hermes.nix                 Hermes Desktop remote gateway URL + token (token in ~/.config/hermes/remote-token, not in repo)
   home-assistant-cli.nix     hass-cli; server + 1Password token ref in ~/.config/hass-cli/env (not in repo)
   gmailctl.nix               gmailctl; config and OAuth files in ~/.gmailctl (not in repo)
   update-notifier.nix        nixos-update-notifier tray icon: checks every 6h whether `update` would change the system (Adwaita icons)
-  rex.nix                    Rex client: rex CLI, xterm-rex terminfo, SSH fallback, init.lua loading remote hosts from ~/.config/rex/hosts.lua (not in repo)
+  rex.nix                    Rex: rex CLI, xterm-rex terminfo, SSH fallback, local personal server (user service `rex`), init.lua loading remote hosts from ~/.config/rex/hosts.lua (not in repo)
   rex-linux.nix              Rex Linux (unofficial GUI client, temporary); hosts in ~/.config/rex-linux/workspace.json
 config/
   nvim/                      LazyVim config, symlinked to ~/.config/nvim (edit live, no rebuild)
