@@ -6,9 +6,10 @@
   # required. Session variables load at login, so log out and back in after
   # changing this.
   home.sessionVariables = {
-    HERMES_DESKTOP_REMOTE_URL = "https://hermes-desktop.dyer.house";
+    #HERMES_DESKTOP_REMOTE_URL = "https://hermes-dashboard.dyer.house";
     # Token lives outside the repo and the Nix store (~/.config/hermes/remote-token,
     # mode 600); read at login.
-    HERMES_DESKTOP_REMOTE_TOKEN = "$(cat ${config.home.homeDirectory}/.config/hermes/remote-token 2>/dev/null)";
+    #HERMES_DESKTOP_REMOTE_TOKEN = "$(cat ${config.home.homeDirectory}/.config/hermes/remote-token 2>/dev/null)";
+    #HERMES_DESKTOP_REMOTE_URL = "$(cat ${config.home.homeDirectory}/.config/hermes/remote-url 2>/dev/null)";
   };
 }

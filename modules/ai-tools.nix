@@ -22,7 +22,13 @@
     inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default
     # Hermes Desktop (Electron app with a launcher entry). Connects to a
     # remote `hermes serve` backend: Settings > Gateways > Remote gateway.
-    inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.desktop
+    # CHROME_DESKTOP gives the window the same app ID as its launcher entry
+    # (com.nousresearch.hermes.desktop), so GNOME shows the Hermes icon in the
+    # dock and Alt+Tab instead of a generic one. The Nix build skips
+    # electron-builder, which is what normally sets that ID.
+    (inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.desktop.override {
+      extraEnv.CHROME_DESKTOP = "com.nousresearch.hermes.desktop";
+    })
   ];
 
   # Remote backend URL for Hermes Desktop is set per user in home/hermes.nix.
