@@ -18,4 +18,9 @@ _: {
       ControlPersist = "10m";
     };
   };
+
+  # ssh itself uses IdentityAgent (modules/1password.nix), but ssh-add and
+  # some GUI tools only read SSH_AUTH_SOCK. Loads at login, so log out and
+  # back in after changing this.
+  home.sessionVariables.SSH_AUTH_SOCK = "$HOME/.1password/agent.sock";
 }
