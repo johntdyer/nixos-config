@@ -50,6 +50,7 @@ Flake-based NixOS config for John's laptop: a Lenovo ThinkPad T490s (hostname `n
 | `update` | `nh os switch --update ~/nixos-config` | Update all inputs and rebuild |
 | `rollback` | `nh os rollback` | Switch to the previous generation |
 | `generations` | `nh os info` | List generations (running and boot default marked) |
+| `gcp_login` | `gcloud auth login --update-adc` | Log in to Google Cloud (gcloud and Application Default Credentials) |
 
 | Task | Command |
 |---|---|
@@ -103,7 +104,7 @@ home/
   update-notifier.nix        nixos-update-notifier tray icon: checks every 6h whether `update` would change the system (Adwaita icons)
   rex.nix                    Rex: rex CLI, xterm-rex terminfo, SSH fallback, local personal server (user service `rex`), init.lua loading remote hosts from ~/.config/rex/hosts.lua (not in repo)
   rex-linux.nix              Rex Linux (unofficial GUI client, temporary); hosts in ~/.config/rex-linux/workspace.json
-  infra-tools.nix            Terraform, OpenTofu (`tofu`), sops
+  infra-tools.nix            Terraform, OpenTofu (`tofu`), sops, Google Cloud CLI (gcloud + gke-gcloud-auth-plugin)
 config/
   nvim/                      LazyVim config, symlinked to ~/.config/nvim (edit live, no rebuild)
 statix.toml                  statix lint settings
@@ -117,7 +118,7 @@ Each module starts with a one-line comment saying what it covers. Group membersh
 |---|---|
 | Desktop | GNOME (Wayland), elementary Files, Sushi (Space to preview), Dash to Dock, Ulauncher on Super+Space |
 | Shell | zsh, oh-my-zsh plugins (git, sudo, z, history, colored-man-pages, fzf), autosuggestions, syntax highlighting, Starship prompt (Nerd Font symbols), direnv + nix-direnv |
-| CLI | git, Neovim (LazyVim, `vi`/`vim` aliases), tmux, Terraform, OpenTofu, sops, curl, wget, htop, ripgrep, fd, jq, fzf, nvd, nix-output-monitor |
+| CLI | git, Neovim (LazyVim, `vi`/`vim` aliases), tmux, Terraform, OpenTofu, sops, gcloud, curl, wget, htop, ripgrep, fd, jq, fzf, nvd, nix-output-monitor |
 | Network | Tailscale + Trayscale, dig, whois, mosh, Rex (client, remote hosts in ~/.config/rex/hosts.lua), Wireshark, tshark |
 | Apps | Rex Linux (temporary), Google Chrome, Firefox, Ghostty, Slack, Telegram, Discord, Zoom, VS Code, Dropbox, Remmina, TigerVNC, FreeRDP |
 | Security | 1Password (app, CLI, SSH agent, git signing) |

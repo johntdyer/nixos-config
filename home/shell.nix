@@ -55,6 +55,10 @@
       rollback = "nh os rollback";
       # List generations, with the running and boot-default ones marked.
       generations = "nh os info";
+
+      # Google Cloud login: user credentials for gcloud, and --update-adc also
+      # writes Application Default Credentials (Terraform, SDKs) in one step.
+      gcp_login = "gcloud auth login --update-adc";
     };
   };
 
@@ -69,6 +73,13 @@
     settings = {
       # No blank line between prompts.
       add_newline = false;
+      # Google Cloud: shows the active gcloud account and project (from
+      # ~/.config/gcloud) when one is set, nothing when logged out. It reads
+      # config only, so an expired token still shows; `gcp_login` refreshes.
+      gcloud = {
+        format = ''[$symbol$account(@$domain)(\($project\))]($style) '';
+        style = "bold blue";
+      };
     };
   };
 
