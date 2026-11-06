@@ -51,6 +51,14 @@
       url = "github:stuckj/nixos-update-notifier";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Rex terminal server. Upstream publishes one flake per channel (stable,
+    # preview, snapshot); the URL always serves the newest release, flake.lock
+    # pins it, `nix flake update rex` moves forward. Snapshot because Linux is
+    # still in testing and stable.tar.gz returned "Blob not found" (2026-11-06);
+    # switch to stable once it exists. Packages the prebuilt
+    # release binary, so no nixpkgs follows. Used via its home-manager module
+    # (home/rex.nix).
+    rex.url = "https://pkgs.superlogical.com/rex/nix/snapshot.tar.gz";
   };
 
   outputs =

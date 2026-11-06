@@ -59,7 +59,7 @@
           show-apps-at-top = false;
         };
 
-        # Super+Ctrl+Space opens Ulauncher (Wayland needs a GNOME shortcut for this).
+        # Shift+Super+Space opens Ulauncher (Wayland needs a GNOME shortcut for this).
         "org/gnome/settings-daemon/plugins/media-keys" = {
           custom-keybindings = [
             "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ulauncher/"
@@ -68,7 +68,7 @@
         "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ulauncher" = {
           name = "Ulauncher";
           command = "ulauncher-toggle";
-          binding = "<Super><Control>space";
+          binding = "<Shift><Super>space";
         };
 
         # Free up Super+Space (GNOME uses it to switch input sources by default).

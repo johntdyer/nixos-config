@@ -100,6 +100,7 @@ home/
   home-assistant-cli.nix     hass-cli; server + 1Password token ref in ~/.config/hass-cli/env (not in repo)
   gmailctl.nix               gmailctl; config and OAuth files in ~/.gmailctl (not in repo)
   update-notifier.nix        nixos-update-notifier tray icon: checks every 6h whether `update` would change the system (Adwaita icons)
+  rex.nix                    Rex: rex CLI, xterm-rex terminfo, SSH fallback, personal server (systemd user service `rex`)
 config/
   nvim/                      LazyVim config, symlinked to ~/.config/nvim (edit live, no rebuild)
 statix.toml                  statix lint settings
@@ -114,7 +115,7 @@ Each module starts with a one-line comment saying what it covers. Group membersh
 | Desktop | GNOME (Wayland), elementary Files, Sushi (Space to preview), Dash to Dock, Ulauncher on Super+Space |
 | Shell | zsh, oh-my-zsh plugins (git, sudo, z, history, colored-man-pages, fzf), autosuggestions, syntax highlighting, Starship prompt (Nerd Font symbols), direnv + nix-direnv |
 | CLI | git, Neovim (LazyVim, `vi`/`vim` aliases), tmux, curl, wget, htop, ripgrep, fd, jq, fzf, nvd, nix-output-monitor |
-| Network | Tailscale + Trayscale, dig, whois, mosh, Wireshark, tshark |
+| Network | Tailscale + Trayscale, dig, whois, mosh, Rex (personal server), Wireshark, tshark |
 | Apps | Google Chrome, Firefox, Ghostty, Slack, Telegram, Discord, Zoom, VS Code, Dropbox, Remmina, TigerVNC, FreeRDP |
 | Security | 1Password (app, CLI, SSH agent, git signing) |
 | AI | Claude Desktop, Claude Code (from unstable), Hermes Agent |
@@ -133,6 +134,7 @@ Each module starts with a one-line comment saying what it covers. Group membersh
 | `home-manager` | nix-community/home-manager `release-26.05` | Follows `nixpkgs`; branch must match the nixpkgs release |
 | `git-hooks` | cachix/git-hooks.nix | Follows `nixpkgs`; repo pre-commit hooks only, not part of the system |
 | `nixos-update-notifier` | stuckj/nixos-update-notifier | Follows `nixpkgs`; home-manager module in `home/update-notifier.nix` |
+| `rex` | pkgs.superlogical.com/rex/nix/snapshot.tar.gz | Snapshot channel (no stable Linux build yet); prebuilt binary, no follows; home-manager module in `home/rex.nix`; `nix flake update rex` to upgrade |
 
 New inputs that take `nixpkgs` should get `inputs.nixpkgs.follows`. Each extra nixpkgs copy slows every rebuild.
 
